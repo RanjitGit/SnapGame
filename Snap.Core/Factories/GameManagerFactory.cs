@@ -1,4 +1,5 @@
-﻿using Snap.Core.Interfaces;
+﻿using Microsoft.Extensions.Logging;
+using Snap.Core.Interfaces;
 using Snap.Core.Managers;
 
 namespace Snap.Core.Factories
@@ -11,9 +12,9 @@ namespace Snap.Core.Factories
 
         public static IGameManagerFactory Instance { get => _instance.Value; }
 
-        public IGameManager CreateSnapGameManager(ISnapUI snapUI)
+        public IGameManager CreateSnapGameManager(ISnapUI snapUI, ILogger logger)
         {
-            return new SnapGameManager(snapUI);
+            return new SnapGameManager(snapUI, logger);
         }
     }
 }

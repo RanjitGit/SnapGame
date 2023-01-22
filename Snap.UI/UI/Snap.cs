@@ -1,4 +1,5 @@
-﻿using Snap.Core.Factories;
+﻿using Microsoft.Extensions.Logging;
+using Snap.Core.Factories;
 using Snap.Core.Interfaces;
 
 namespace Snap.UI
@@ -7,7 +8,8 @@ namespace Snap.UI
     {
         private IGameManager _gameManager;
         private System.Windows.Forms.Timer _timer = new System.Windows.Forms.Timer();
-        
+        private readonly ILogger<Snap> _logger;
+
         public int CommonCount { get => int.Parse(lblCommonCount.Text); set => lblCommonCount.Text = value.ToString().PadLeft(3,'0'); }
         public int Player1Count { get => int.Parse(lblPlayer1Count.Text); set => lblPlayer1Count.Text = value.ToString().PadLeft(3, '0'); }
         public int Player2Count { get => int.Parse(lblPlayer2Count.Text); set => lblPlayer2Count.Text = value.ToString().PadLeft(3, '0'); }
@@ -15,18 +17,19 @@ namespace Snap.UI
         public string CurrentCard { set => pbCurrentCard.Image = string.IsNullOrEmpty(value) ? null : Image.FromFile(value); }
         public string PreviousCard { set => pbPrevCard.Image = string.IsNullOrEmpty(value) ? null : Image.FromFile(value); }
         
-        public Snap()
+        public Snap(ILogger<Snap> logger)
         {
+            _logger = logger;
             InitializeComponent();
             Input popup = new();
             DialogResult dialogresult = popup.ShowDialog();
             if (dialogresult == DialogResult.OK)
             {
-                _gameManager = GameManagerFactory.Instance.CreateSnapGameManager(this);
+                _gameManager = GameManagerFactory.Instance.CreateSnapGameManager(this, _logger);
                 _gameManager.Init(popup.SelectedOption);
             }
             else
-                Environment.Exit(0);
+                Environment.Exit(0);            
         }
 
         public void DisplayMessageBox(string message)
